@@ -1,16 +1,54 @@
-const menuBtn = document.getElementById("menuBtn");
-const navLinks = document.getElementById("navLinks");
+// Felix Daniels Portfolio
+// Simple interactions for navigation and user experience
 
-if (menuBtn && navLinks) {
-  menuBtn.addEventListener("click", function () {
-    navLinks.classList.toggle("active");
-  });
+document.addEventListener("DOMContentLoaded", () => {
 
-  const links = navLinks.querySelectorAll("a");
+  // Smooth scrolling for internal links
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener("click", function (event) {
+      const targetId = this.getAttribute("href");
 
-  links.forEach(function (link) {
-    link.addEventListener("click", function () {
-      navLinks.classList.remove("active");
+      if (!targetId || targetId === "#") return;
+
+      const target = document.querySelector(targetId);
+
+      if (target) {
+        event.preventDefault();
+
+        target.scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+      }
     });
   });
-}
+
+
+  // Simple scroll reveal
+  const revealItems = document.querySelectorAll(
+    ".project, .process-grid > div, .case-details article"
+  );
+
+  const revealObserver = new IntersectionObserver(
+    (entries, observer) => {
+      entries.forEach(entry => {
+
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+
+        }
+
+      });
+    },
+    {
+      threshold: 0.12
+    }
+  );
+
+  revealItems.forEach(item => {
+    item.classList.add("reveal");
+    revealObserver.observe(item);
+  });
+
+});
